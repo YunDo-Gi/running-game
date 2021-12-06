@@ -1,3 +1,7 @@
-canvas {
-    padding: auto;
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+.container {
+    margin:auto;
+    display: flex;
+    justify-content: center;
 }

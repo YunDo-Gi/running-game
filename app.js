@@ -1,6 +1,8 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
+const HI_SCORE = 'highscore';
+
 let cactusImage = new Image(50, 50);
 cactusImage.src = 'cactus.png'
 
@@ -32,6 +34,12 @@ class Obstacle {
     }
 }
 
+
+
+let score = 0;
+let highScore = localStorage.getItem(HI_SCORE);
+
+
 let timer = 0;
 let velocity = 1.00; // 한 화면 내의 요소들 속도 통일 시켜야할 듯 + 속도에 따라 장애물들의 등장 간격을 달리해야함
 // 캔버스 내에서 장애물이 특정 위치를 지나면 다음 장애물 등장?
@@ -43,6 +51,7 @@ let myReq;
 function move() {
     myReq = requestAnimationFrame(move); // 1초당 60번 동작
     timer++;
+    score++;
     velocity += 0.01;
     ctx.clearRect(0,0,canvas.width, canvas.height);
 
@@ -71,6 +80,20 @@ function move() {
     if(jumpSwitch === false && player.y < 100) {
         player.y += 2;
     }
+
+    // score
+    ctx.font = '20px Pacifico'
+    ctx.fillStyle = 'grey'
+    if(highScore && highScore >= score) {
+        ctx.fillText(highScore.toString().padStart(5,'0'), 470, 20);
+    }
+    ctx.fillText(score.toString().padStart(5,'0'), 530, 20);
+    if(highScore) {
+        if(highScore < score) {
+            ctx.fillText(score.toString().padStart(5,'0'), 470, 20);
+        }
+    }
+
     player.draw();
 } 
 
@@ -78,6 +101,14 @@ function collision(a, b) {
     let distanceX = b.x - (a.x + a.width);
     let distanceY = b.y - (a.y + a.height);
     if(distanceX < 0 && distanceY <0) {
+        if(highScore) {
+            if(highScore < score) {
+                localStorage.setItem(HI_SCORE, score);
+            }
+        }
+        if(highScore === null) {
+            localStorage.setItem(HI_SCORE, score);  
+        }
         cancelAnimationFrame(myReq);
     }
 }
